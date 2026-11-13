@@ -89,4 +89,49 @@
             column="13"/>
     </issue>
 
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        errorLine1="src/main/res/drawable-mdpi/ic_launcher_photo_bg.png"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable-mdpi/ic_launcher_photo_bg.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        errorLine1="src/main/res/drawable-hdpi/ic_launcher_photo_bg.png"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable-hdpi/ic_launcher_photo_bg.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        errorLine1="src/main/res/drawable-xhdpi/ic_launcher_photo_bg.png"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable-xhdpi/ic_launcher_photo_bg.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        errorLine1="src/main/res/drawable-xxhdpi/ic_launcher_photo_bg.png"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable-xxhdpi/ic_launcher_photo_bg.png"/>
+    </issue>
+
+    <issue
+        id="IconLauncherShape"
+        message="Launcher icons should not fill every pixel of their square region; see the design guide for details"
+        errorLine1="src/main/res/drawable-xxxhdpi/ic_launcher_photo_bg.png"
+        errorLine2="~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/res/drawable-xxxhdpi/ic_launcher_photo_bg.png"/>
+    </issue>
 </issues>
