@@ -136,14 +136,14 @@ internal class GeofenceTool(
         if (radius !in MIN_RADIUS..MAX_RADIUS) throw PhoneToolException("radius_m is $MIN_RADIUS to $MAX_RADIUS.")
         if (!places.allowed()) {
             throw PhoneToolException(
-                "Watching places needs precise location all the time, which Kyllene doesn't have. The user can allow it in " +
-                    "Kyllene: Settings → Phone tools → Watched places.",
+                "Watching places needs precise location all the time, which Hermes doesn't have. The user can allow it in " +
+                    "Hermes: Settings → Phone tools → Watched places.",
             )
         }
         if (context.getSystemService(LocationManager::class.java) == null) throw PhoneToolException("The phone has no location service.")
         val target = chats.of(session) ?: throw PhoneToolException(
             "A place can only be watched for a chat open on this phone, so its message has somewhere to go. Ask the user " +
-                "to add it from a chat in Kyllene.",
+                "to add it from a chat in Hermes.",
         )
         val lat = args.double("latitude")
         val lon = args.double("longitude")

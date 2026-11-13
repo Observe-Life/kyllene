@@ -504,7 +504,7 @@ class PhoneToolsBridge(
         const val MAX_RECENT = 20
         const val TOO_LONG = "The phone took too long."
         const val SWITCHED_OFF = "The user turned this tool off on the phone."
-        const val UNKNOWN_TOOL = "This version of Kyllene doesn't have that tool; the user can update Kyllene."
+        const val UNKNOWN_TOOL = "This version of Hermes doesn't have that tool; the user can update Hermes."
         private val WAITS_FOR_USER = setOf(State.NotInstalled, State.Outdated)
         private const val MAX_ANSWERED = 200
         private const val ID_BYTES = 16

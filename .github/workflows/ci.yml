@@ -74,6 +74,15 @@ jobs:
             echo '::error::R8 changed the TeX macro method'; exit 1;
           }
 
+      # This fork installs from CI: attach the dev APK (the same build the checks above ran on) as an artifact.
+      - name: Upload the dev APK
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: hermes-dev-apk
+          path: androidApp/build/outputs/apk/dev/androidApp-dev.apk
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Lint report
         if: failure()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

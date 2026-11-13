@@ -141,7 +141,7 @@ internal class CalendarTool(private val context: Context, private val confirmati
             values.put(CalendarContract.Events.DTSTART, start.atZone(zone).toInstant().toEpochMilli())
             values.put(CalendarContract.Events.DTEND, end.atZone(zone).toInstant().toEpochMilli())
         }
-        val calendar = writableCalendar() ?: throw PhoneToolException("The phone has no calendar Kyllene can add to.")
+        val calendar = writableCalendar() ?: throw PhoneToolException("The phone has no calendar Hermes can add to.")
         values.put(CalendarContract.Events.CALENDAR_ID, calendar.id)
         values.put(CalendarContract.Events.TITLE, title)
         location?.let { values.put(CalendarContract.Events.EVENT_LOCATION, it) }
@@ -328,7 +328,7 @@ internal class CalendarTool(private val context: Context, private val confirmati
 
     private fun need(permission: String) {
         if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-            throw PhoneToolException("Kyllene isn't allowed to use the calendar. The user can allow it in Kyllene: Settings → Phone tools.")
+            throw PhoneToolException("Hermes isn't allowed to use the calendar. The user can allow it in Hermes: Settings → Phone tools.")
         }
     }
 

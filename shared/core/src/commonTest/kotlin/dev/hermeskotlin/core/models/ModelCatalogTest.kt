@@ -70,6 +70,18 @@ class ModelCatalogTest {
     }
 
     @Test
+    fun theNousPortalProviderIsDropped() {
+        val catalog = parse(
+            """{"providers":[
+                {"slug":"nous","name":"Nous Portal","models":["glm-5.3"],"authenticated":true},
+                {"slug":"openrouter","name":"OpenRouter","models":["a/m1"]}
+            ]}""",
+        )
+        assertEquals(listOf("openrouter"), catalog.providers.map { it.slug })
+        assertNull(catalog.find("nous", "glm-5.3"))
+    }
+
+    @Test
     fun aRepeatedProviderSlugIsKeptOnce() {
         val catalog = parse(
             """{"providers":[

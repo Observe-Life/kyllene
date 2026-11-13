@@ -363,7 +363,7 @@ class WatchRelay(
         connection.start(gateway)
         if (withTimeoutOrNull(CONNECT_MS) { connection.state.first { it is ConnectionState.Connected } } == null) {
             connection.retry()
-            return CallChat.Failed("Kyllene can't reach your gateway right now.")
+            return CallChat.Failed("Hermes can't reach your gateway right now.")
         }
         val session = turnLock.withLock {
             // Another call on, from the phone or the watch: one chat is held at a time, and taking it would cut that
@@ -497,7 +497,7 @@ class WatchRelay(
             connection.start(saved.gatewayUrl)
             if (withTimeoutOrNull(CONNECT_MS) { connection.state.first { it is ConnectionState.Connected } } == null) {
                 connection.retry()
-                error("Kyllene can't reach your gateway right now.")
+                error("Hermes can't reach your gateway right now.")
             }
             val roster = bots.roster().bots
             botChats.note(roster)
@@ -550,7 +550,7 @@ class WatchRelay(
         val storedId = if (botProfile == null) ask.chatId else try {
             if (withTimeoutOrNull(CONNECT_MS) { connection.state.first { it is ConnectionState.Connected } } == null) {
                 connection.retry()
-                return fail("Kyllene can't reach your gateway right now.")
+                return fail("Hermes can't reach your gateway right now.")
             }
             openBot(botProfile)
         } catch (e: CancellationException) {
@@ -575,7 +575,7 @@ class WatchRelay(
         tell(last.copy(phase = ReplyPhase.Sending))
         if (withTimeoutOrNull(CONNECT_MS) { connection.state.first { it is ConnectionState.Connected } } == null) {
             connection.retry()
-            return fail("Kyllene can't reach your gateway right now.")
+            return fail("Hermes can't reach your gateway right now.")
         }
         val session = sessionFor(gateway, profile, storedId)
         // A chat picked on the watch loads its history first; sent before it, the reply would be found among the old.
@@ -710,7 +710,7 @@ class WatchRelay(
     }
 
     companion object {
-        const val SIGNED_OUT = "Sign in to Kyllene on your phone first."
+        const val SIGNED_OUT = "Sign in to Hermes on your phone first."
         const val ON_ANOTHER_CALL = "You're already on a call with Hermes. Hang up there first."
         const val NOTHING_HEARD = "I didn't catch that."
         private const val CHAT_LIST_SIZE = 15

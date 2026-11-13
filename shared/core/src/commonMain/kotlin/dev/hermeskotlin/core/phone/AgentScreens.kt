@@ -140,7 +140,7 @@ class AgentScreens(private val shownWithinMs: Long = SHOWN_WITHIN_MS) {
         const val SHOWN_WITHIN_MS = 15_000L
 
         const val REPLACED = "A newer screen with the same surface id took its place."
-        const val NOT_SHOWN = "Kyllene isn't showing this chat on the phone right now, so the user can't see the " +
+        const val NOT_SHOWN = "Hermes isn't showing this chat on the phone right now, so the user can't see the " +
             "screen. Ask in words instead, or try again when they're in the chat."
     }
 }

@@ -75,6 +75,8 @@ data class ModelCatalog(
         fun parse(result: JsonObject?): ModelCatalog {
             val providers = result?.get("providers").asObjectList().mapNotNull { row ->
                 val slug = row.string("slug") ?: return@mapNotNull null
+                // This fork doesn't offer Nous Portal: its provider row and every model under it are dropped.
+                if (slug == "nous") return@mapNotNull null
                 if (row.boolean("authenticated") == false) return@mapNotNull null
                 val capabilities = row["capabilities"] as? JsonObject
                 val pricing = row["pricing"] as? JsonObject
@@ -213,7 +215,7 @@ class ModelsApi(private val connection: GatewayConnection) {
  * The providers a gateway fetches prices for (hermes-agent `get_pricing_for_provider`); the rest never have any,
  * so their missing prices are no reason to ask again.
  */
-private val PRICED_PROVIDERS = setOf("openrouter", "nous", "ai-gateway", "novita", "deepinfra", "fireworks", "kilocode")
+private val PRICED_PROVIDERS = setOf("openrouter", "ai-gateway", "novita", "deepinfra", "fireworks", "kilocode")
 
 private fun JsonObject.strings(key: String): List<String> =
     (this[key] as? JsonArray).orEmpty().mapNotNull { (it as? JsonPrimitive)?.takeIf { p -> p.isString }?.contentOrNull }

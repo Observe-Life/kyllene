@@ -65,7 +65,7 @@ class LoopbackHttpReceiver(private val returnUri: String?) : LoopbackReceiver {
                 out.flush()
                 return null
             }
-            val next = if (returnUri != null) "<a href=\"$returnUri\">Go back to Kyllene</a>" else "You can close this tab."
+            val next = if (returnUri != null) "<a href=\"$returnUri\">Go back to Hermes</a>" else "You can close this tab."
             val body = "<!doctype html><meta charset=utf-8><meta name=viewport content=\"width=device-width\">" +
                 "<title>Signed in</title><p style=\"font-family:sans-serif;padding:24px\">Signed in. $next</p>"
             val bytes = body.toByteArray()

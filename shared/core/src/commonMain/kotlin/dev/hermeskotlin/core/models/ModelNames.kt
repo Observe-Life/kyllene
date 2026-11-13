@@ -21,7 +21,6 @@ fun displayProviderName(slug: String, fallback: String? = null): String =
 
 private val PROVIDER_NAMES = mapOf(
     "anthropic" to "Anthropic",
-    "nous" to "Nous Portal",
     "openai-codex" to "ChatGPT subscription",
     "qwen-oauth" to "Qwen Code",
     "xai" to "xAI",

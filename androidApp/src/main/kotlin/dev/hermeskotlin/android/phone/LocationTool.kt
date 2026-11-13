@@ -56,13 +56,13 @@ internal class LocationTool(private val context: Context) {
     suspend fun locate(fresh: Boolean, old: Boolean = true): Location {
         val precise = granted(Manifest.permission.ACCESS_FINE_LOCATION)
         if (!precise && !granted(Manifest.permission.ACCESS_COARSE_LOCATION)) {
-            throw PhoneToolException("Kyllene isn't allowed to use the phone's location. The user can allow it in Kyllene: Settings → Phone tools.")
+            throw PhoneToolException("Hermes isn't allowed to use the phone's location. The user can allow it in Hermes: Settings → Phone tools.")
         }
         // Android only hands an app in the background its location with "all the time" access, and then quietly.
         if (!visible() && !backgroundAllowed()) {
             throw PhoneToolException(
-                "Kyllene is in the background and may only read the location while it's open. Ask the user to open Kyllene, " +
-                    "or to allow location all the time in Kyllene: Settings → Phone tools.",
+                "Hermes is in the background and may only read the location while it's open. Ask the user to open Hermes, " +
+                    "or to allow location all the time in Hermes: Settings → Phone tools.",
             )
         }
         val manager = context.getSystemService(LocationManager::class.java) ?: throw PhoneToolException("The phone has no location service.")
@@ -80,7 +80,7 @@ internal class LocationTool(private val context: Context) {
     private fun backgroundAllowed() =
         Build.VERSION.SDK_INT < Build.VERSION_CODES.Q || granted(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
 
-    /** Whether one of Kyllene's screens is showing: what "while in use" means to Android (a running service isn't). */
+    /** Whether one of Hermes's screens is showing: what "while in use" means to Android (a running service isn't). */
     private fun visible(): Boolean {
         val state = ActivityManager.RunningAppProcessInfo().also(ActivityManager::getMyMemoryState)
         return state.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND ||

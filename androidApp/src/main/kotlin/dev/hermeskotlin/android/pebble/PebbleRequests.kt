@@ -117,13 +117,13 @@ class PebbleRequests(
     fun answer(watch: String, answer: PebbleIncoming.Answer) {
         scope.launch {
             val error = if (!on) {
-                "Answering on the Pebble is off in Kyllene's settings. Answer on your phone."
+                "Answering on the Pebble is off in Hermes's settings. Answer on your phone."
             } else {
                 when (answers.answer(answer.requestId) { watchAnswer(it, answer.index, answer.text) }) {
                     RequestAnswers.Outcome.Answered -> null
                     RequestAnswers.Outcome.Gone -> "It was already answered."
                     RequestAnswers.Outcome.Refused -> "That answer doesn't fit any more. Answer on your phone."
-                    RequestAnswers.Outcome.NotConnected -> "Kyllene can't reach your gateway right now."
+                    RequestAnswers.Outcome.NotConnected -> "Hermes can't reach your gateway right now."
                 }
             }
             outbox.watch(watch).message(PebbleLink.requestEnd(answer.requestId, error))
