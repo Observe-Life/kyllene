@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    The app mark, the summit at dawn, as the phone's default launcher icon (androidApp's ic_launcher_foreground.xml,
-    shapes in its launcher_icons.xml): Mount Kyllene with a lit face, a shaded face and a snowcap, the sun rising
-    off its right shoulder. The sky is ic_launcher_background.
+    The app mark, the summit at dawn, as the phone's default launcher icon was (shapes in androidApp's
+    launcher_icons.xml): Mount Kyllene with a lit face, a shaded face and a snowcap, the sun rising
+    off its right shoulder.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
