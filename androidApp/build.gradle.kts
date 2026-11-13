@@ -105,7 +105,8 @@ android {
             initWith(getByName("release"))
             applicationIdSuffix = ".dev"
             versionNameSuffix = "-dev"
-            signingConfig = signingConfigs.getByName("debug")
+            // CI keeps one keystore in the Actions secrets, so every dev APK installs over the last.
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
             matchingFallbacks += listOf("release")
         }
     }
