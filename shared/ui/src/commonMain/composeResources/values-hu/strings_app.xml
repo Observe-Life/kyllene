@@ -383,7 +383,7 @@
     <string name="client_cert_storage_read">A Hermes nem tudta beolvasni a beállításait, vagy a fájl nagyobb 16 MiB-nál. Ellenőrizd a fájlhozzáférést, mielőtt újra próbálod.</string>
     <string name="client_cert_storage_write">A Hermes nem tudta befejezni a beállításai mentését vagy rendbetételét. A meglévő másolatok megmaradtak; ellenőrizd a lemezterületet és a fájlhozzáférést, mielőtt újra próbálod.</string>
     <string name="client_cert_storage_uncertain">A Hermes nem tudta megerősíteni, hogy a beállításai mentésre kerültek. Ellenőrizd a fájlhozzáférést, majd indítsd újra, vagy lépj ki és indítsd újra, mielőtt további módosítást végzel.</string>
-    <string name="client_cert_storage_changed">A beállítások ezen az ablakon kívül megváltoztak. Lépj ki, és indítsd újra a Kyllenét, hogy mentés előtt újratöltse őket.</string>
+    <string name="client_cert_storage_changed">A beállítások ezen az ablakon kívül megváltoztak. Lépj ki, és indítsd újra a Hermest, hogy mentés előtt újratöltse őket.</string>
     <string name="client_cert_storage_legacy">Ütköző vagy befejezetlen régi beállítások kerültek elő. A meglévő fájlok megmaradtak. Lépj ki, és rendezd a régebbi másolatot, mielőtt újra próbálod.</string>
     <string name="client_cert_storage_unsupported">A Hermes nem tudta ellenőrizni a Flatpak alkalmazás-azonosítóját. Ellenőrizd a telepítést, mielőtt újra próbálod. Titkosítatlan tartalék megoldás nincs.</string>
 </resources>
