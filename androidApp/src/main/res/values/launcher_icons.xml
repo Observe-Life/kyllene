@@ -3,17 +3,8 @@
 <resources>
     <!--
         The summit's colors per icon: the night sky (top, bottom), the sun (top, bottom), the lit face, the shaded
-        face, and the snow's shadow. Blue is the default icon; the others follow the design system's accents.
+        face, and the snow's shadow, in each accent of the design system.
     -->
-    <color name="launcher_blue_sky_top">#0E1C47</color>
-    <color name="launcher_blue_sky_bottom">#23409F</color>
-    <color name="launcher_blue_sun_top">#FFC877</color>
-    <color name="launcher_blue_sun_bottom">#FF6B3D</color>
-    <color name="launcher_blue_lit_top">#5A90FF</color>
-    <color name="launcher_blue_lit_bottom">#1F5CF2</color>
-    <color name="launcher_blue_shade_top">#1A4FD6</color>
-    <color name="launcher_blue_shade_bottom">#0A35A6</color>
-    <color name="launcher_blue_snow_shade">#CBD7F7</color>
 
     <color name="launcher_violet_sky_top">#1A0F3D</color>
     <color name="launcher_violet_sky_bottom">#3B2290</color>
