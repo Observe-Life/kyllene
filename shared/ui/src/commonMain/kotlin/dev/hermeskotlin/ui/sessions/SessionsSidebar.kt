@@ -9,7 +9,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.ui.graphics.shadow.Shadow
@@ -778,6 +777,9 @@ fun SessionsSidebar(
                     onSettings = onOpenSettings,
                     // Without the switch, search is the Bots side's only way to the chats, so it keeps the pill.
                     onSearch = { searchOpen = true }.takeIf { mode == SidebarMode.Chats || !modeSwitch },
+                    // The phone's new-chat button rides beside the search field, where the footer's pill used
+                    // to be; a desktop starts chats above the list, so it keeps that instead.
+                    onNewChat = { onNewChat(state.project) }.takeIf { !isDesktop },
                     profiles = roster?.profiles.orEmpty(),
                     activeProfile = roster?.active(profile)?.name,
                     // Profiles made or removed on the host since show up, as the account sheet's do.
@@ -1039,10 +1041,6 @@ fun SessionsSidebar(
             connection = connection,
             message = state.message,
             onDismissMessage = viewModel::dismissMessage,
-            onNewChat = {
-                if (searchOpen) closeSearch()
-                onNewChat(state.project.takeIf { state.filter == SessionListFilter.Recent })
-            },
             onAccount = {
                 accountAnchor = accountRow[0]
                 openAccount()
@@ -1203,6 +1201,7 @@ internal fun SessionsSidebarSample(
                 onAccount = {},
                 onSettings = {},
                 onSearch = {},
+                onNewChat = {},
                 profiles = profiles,
                 activeProfile = profiles.firstOrNull()?.name,
                 menuInitiallyOpen = profileMenuOpen,
@@ -1262,7 +1261,6 @@ internal fun SessionsSidebarSample(
             connection = null,
             message = null,
             onDismissMessage = {},
-            onNewChat = {},
             onAccount = {},
             modifier = Modifier.align(Alignment.BottomCenter),
         )
@@ -1315,7 +1313,6 @@ internal fun BotsSidebarSample(
             connection = null,
             message = null,
             onDismissMessage = {},
-            onNewChat = {},
             onAccount = {},
             modifier = Modifier.align(Alignment.BottomCenter),
         )
@@ -1372,6 +1369,8 @@ internal fun MainHeader(
     onAccount: () -> Unit,
     onSettings: () -> Unit,
     onSearch: (() -> Unit)?,
+    /** The phone's new-chat button, beside the search field; a desktop starts chats above the list instead. */
+    onNewChat: (() -> Unit)? = null,
     /** The gateway's profiles; with more than one, the header names the active one and opens them in a menu. */
     profiles: List<Profile> = emptyList(),
     /** The active profile's name, the launch profile's included. */
@@ -1491,8 +1490,18 @@ internal fun MainHeader(
             )
         }
         // Search looks through chats; the bot roster is short enough to read. The header keeps its height
-        // without the pill, so switching sides doesn't move the switch under the finger.
-        if (onSearch != null) SearchPill(onSearch) else Spacer(Modifier.height(maxOf(MinTouchTarget, SEARCH_PILL_HEIGHT)))
+        // without the pill, so switching sides doesn't move the switch under the finger. The phone's new-chat
+        // button sits at the field's other end, with the words gone: the pen alone names it by its shape.
+        if (onSearch != null) {
+            Row(
+                Modifier.fillMaxWidth().padding(horizontal = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                SearchPill(onSearch, Modifier.weight(1f))
+                if (onNewChat != null) NewChatButton(onNewChat)
+            }
+        } else Spacer(Modifier.height(maxOf(MinTouchTarget, SEARCH_PILL_HEIGHT)))
     }
 }
 
@@ -1520,14 +1529,12 @@ private val SEARCH_PILL_HEIGHT = 40.dp
 
 /** A pill that opens search, in a full-height touch target. */
 @Composable
-private fun SearchPill(onClick: () -> Unit) {
+private fun SearchPill(onClick: () -> Unit, modifier: Modifier = Modifier) {
     val interaction = remember { MutableInteractionSource() }
     val shape = CircleShape
     Box(
-        Modifier
-            .fillMaxWidth()
+        modifier
             .heightIn(min = MinTouchTarget)
-            .padding(horizontal = 14.dp)
             .handCursor()
             .clickable(interaction, indication = null, role = Role.Button, onClick = onClick),
         contentAlignment = Alignment.Center,
@@ -1739,7 +1746,7 @@ internal fun navLabel(page: SidebarPage): StringResource = when (page) {
     SidebarPage.Archived -> Res.string.sessions_nav_archived
 }
 
-/** The sidebar's pages as tiles, two to a row; on the desktop one under another, as a desktop sidebar lists its places. */
+/** The sidebar's pages as tiles: on the phone one sliding row, each tile only as wide as its words; on the desktop one under another, as a desktop sidebar lists its places. */
 @Composable
 private fun NavGrid(links: List<NavLink>, inset: Dp = 6.dp) {
     if (isDesktop) {
@@ -1748,14 +1755,14 @@ private fun NavGrid(links: List<NavLink>, inset: Dp = 6.dp) {
         }
         return
     }
-    Column(Modifier.padding(start = inset, end = inset, bottom = 10.dp)) {
-        links.chunked(2).forEach { pair ->
-            // A tile whose label wraps keeps its neighbour the same height.
-            Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                pair.forEach { NavTile(it, Modifier.weight(1f).fillMaxHeight()) }
-                if (pair.size == 1) Box(Modifier.weight(1f))
-            }
-        }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .horizontalScroll(rememberScrollState())
+            .padding(start = inset, end = inset, bottom = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        links.forEach { NavTile(it) }
     }
 }
 
@@ -1777,8 +1784,9 @@ private fun NavTile(link: NavLink, modifier: Modifier = Modifier) {
     ) {
         Row(
             Modifier
-                // A phone's tile fills its grid cell; a desktop row is as tall as its own line, outside a grid too.
-                .then(if (isDesktop) Modifier.fillMaxWidth().heightIn(min = DESKTOP_NAV_ROW) else Modifier.fillMaxSize())
+                // A phone's tile hugs its words inside the sliding row; a desktop row is as tall as its own
+                // line, outside a grid too.
+                .then(if (isDesktop) Modifier.fillMaxWidth().heightIn(min = DESKTOP_NAV_ROW) else Modifier.heightIn(min = MinTouchTarget))
                 .padding(vertical = if (isDesktop) 1.dp else 2.dp)
                 .clip(shape)
                 // On the desktop the page that's open beside the sidebar stays marked, as a chat row does.
@@ -1793,10 +1801,11 @@ private fun NavTile(link: NavLink, modifier: Modifier = Modifier) {
                 link.label,
                 style = Theme[typography][label].copy(fontSize = 13.5.sp, fontWeight = FontWeight.Medium),
                 color = Theme[colors][text],
-                // Large text wraps rather than cutting the name off; the tile grows.
+                // Large text wraps rather than cutting the name off; the tile grows. On the desktop a
+                // shortcut sits at the row's end, so the label takes what the shortcuts leave.
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f, fill = isDesktop && link.keys != null),
+                modifier = if (isDesktop && link.keys != null) Modifier.weight(1f) else Modifier,
             )
             if (isDesktop && link.keys != null) {
                 Text(keysLabel(link.keys), style = Theme[typography][caption], color = Theme[colors][textTertiary], maxLines = 1)
@@ -1828,7 +1837,6 @@ private fun BottomBar(
     connection: ConnectionState?,
     message: Said?,
     onDismissMessage: () -> Unit,
-    onNewChat: () -> Unit,
     onAccount: () -> Unit,
     modifier: Modifier = Modifier,
     /** Where the desktop's account row is, for its menu to open over it. */
@@ -1844,130 +1852,37 @@ private fun BottomBar(
                 AccountRow(userLabel, connection, onClick = onAccount, modifier = Modifier.onGloballyPositioned { onAccountBounds(it.boundsInWindow()) })
                 return@Column
             }
-            Row(
-                Modifier.fillMaxWidth().padding(start = 14.dp, end = 14.dp, top = 4.dp, bottom = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(10.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                NewChatPill(onNewChat, Modifier.weight(1f))
-                Avatar(userLabel, connection, onClick = onAccount)
-            }
+            // The phone's new-chat button lives beside the search field now and the avatar is gone, so the
+            // footer only carries a failed action's message: with none, just the fade-out above the list.
         }
     }
 }
 
-/** The accent pill, glowing, that starts a chat. */
+/** The accent button, glowing, that starts a chat: the pen alone, beside the search field. */
 @Composable
-private fun NewChatPill(onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun NewChatButton(onClick: () -> Unit) {
     val interaction = remember { MutableInteractionSource() }
     val shape = CircleShape
     val fill = Theme[colors][accent]
-    Box(
-        modifier
-            .heightIn(min = MinTouchTarget)
-            .handCursor()
-            .clickable(interaction, indication = null, role = Role.Button, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Row(
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = if (isDesktop) MinTouchTarget else 46.dp)
-                .glow(shape, Shadow(radius = 14.dp, color = fill.copy(alpha = 0.4f), offset = DpOffset(0.dp, 4.dp)))
-                .clip(shape)
-                .background(fill, shape)
-                .indication(interaction, rememberHoverIndication(Theme[colors][onAccent]))
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            UnstyledIcon(Lucide.SquarePen, contentDescription = null, tint = Theme[colors][onAccent], modifier = Modifier.size(16.dp))
-            Text(
-                stringResource(Res.string.sessions_new_chat),
-                style = Theme[typography][body].copy(fontSize = 14.5.sp, fontWeight = FontWeight.SemiBold),
-                color = Theme[colors][onAccent],
-                maxLines = 1,
-            )
-            // The desktop shows its shortcut, as a desktop menu does.
-            if (isDesktop) {
-                Text(
-                    keysLabel("Ctrl+N"),
-                    style = Theme[typography][caption],
-                    color = Theme[colors][onAccent].copy(alpha = 0.7f),
-                    maxLines = 1,
-                )
-            }
-        }
-    }
-}
-
-/**
- * The user's initials on a 46dp disc, opening the account sheet, with a dot when the connection isn't healthy:
- * the header that also shows it is gone in search and on subpages.
- */
-@Composable
-private fun Avatar(userLabel: String?, connection: ConnectionState?, onClick: () -> Unit) {
-    val accountWord = stringResource(Res.string.sessions_account)
-    val connectionText = stringResource(connectionWord(connection))
-    val down = connection != null && connection !is ConnectionState.Connected
-    AvatarButton(
-        // Who's signed in, and the link when it's down, named on hover as the icon buttons beside it are.
-        listOfNotNull(userLabel?.takeIf { it.isNotBlank() } ?: accountWord, connectionText.takeIf { down }).joinToString(" · "),
-        userLabel,
-        connection,
-        accountWord,
-        connectionText.takeIf { down },
-        onClick,
-    )
-}
-
-@Composable
-private fun AvatarButton(
-    tooltip: String,
-    userLabel: String?,
-    connection: ConnectionState?,
-    accountWord: String,
-    connectionText: String?,
-    onClick: () -> Unit,
-) = Tooltip(tooltip) {
-    val initials = userLabel?.initials()
-    val interaction = remember { MutableInteractionSource() }
+    val newChat = stringResource(Res.string.sessions_new_chat)
     Box(
         Modifier
             .size(MinTouchTarget)
             .handCursor()
-            .clickable(interaction, indication = null, role = Role.Button, onClickLabel = accountWord, onClick = onClick)
-            .semantics {
-                contentDescription = accountWord
-                if (connectionText != null) stateDescription = connectionText
-            },
+            .clickable(interaction, indication = null, role = Role.Button, onClick = onClick)
+            .semantics { contentDescription = newChat },
         contentAlignment = Alignment.Center,
     ) {
         Box(
             Modifier
-                // As big as the New chat pill beside it.
-                .size(if (isDesktop) MinTouchTarget else 46.dp)
-                .clip(CircleShape)
-                .background(Theme[colors][surface3])
-                .indication(interaction, rememberHoverIndication(Theme[colors][text]))
-                .clearAndSetSemantics { },
+                .fillMaxSize()
+                .glow(shape, Shadow(radius = 14.dp, color = fill.copy(alpha = 0.4f), offset = DpOffset(0.dp, 4.dp)))
+                .clip(shape)
+                .background(fill, shape)
+                .indication(interaction, rememberHoverIndication(Theme[colors][onAccent])),
             contentAlignment = Alignment.Center,
         ) {
-            if (initials.isNullOrEmpty()) {
-                UnstyledIcon(Lucide.CircleUser, contentDescription = null, tint = Theme[colors][textSecondary], modifier = Modifier.size(22.dp))
-            } else {
-                Text(initials, style = Theme[typography][label].copy(fontSize = 14.sp, fontWeight = FontWeight.SemiBold), color = Theme[colors][textSecondary])
-            }
-        }
-        if (connection != null && connection !is ConnectionState.Connected) {
-            Box(
-                Modifier
-                    .size(14.dp)
-                    .align(Alignment.TopEnd)
-                    .background(Theme[colors][sidebarColor], CircleShape)
-                    .padding(2.dp)
-                    .background(connectionDot(connection), CircleShape),
-            )
+            UnstyledIcon(Lucide.SquarePen, contentDescription = null, tint = Theme[colors][onAccent], modifier = Modifier.size(16.dp))
         }
     }
 }
