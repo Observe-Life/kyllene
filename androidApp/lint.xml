@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The default icon lives in mipmap-anydpi-v26 because the user pinned that exact
+     path in the icon spec; with minSdk 26 the folder is equivalent to anydpi. -->
+<lint>
+    <issue id="ObsoleteSdkInt">
+        <ignore path="res/mipmap-anydpi-v26" />
+        <ignore path="src/main/res/mipmap-anydpi-v26" />
+    </issue>
+</lint>
